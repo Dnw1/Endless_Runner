@@ -1,51 +1,51 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
-	
-	public GameObject player;
-	private GameObject currentPlayer;
-	private GameCamera cam;
-	private Vector3 checkpoint;
 
-	public static int levelCount = 2;
-	public static int currentLevel = 1;
+	public Transform platformGenerator;
+	private Vector3 platformStartPoint;
 
+	public Transform platformGenerator1;
+	private Vector3 platformStartPoint1;
+
+	public Transform platformGenerator2;
+	private Vector3 platformStartPoint2;
+
+	public Transform platformGenerator3;
+	private Vector3 platformStartPoint3;
+
+	public Player thePlayer;
+	private Vector3 playerStartPoint;
+	// Use this for initialization
 	void Start () {
-		cam = GetComponent<GameCamera>();
+		platformStartPoint = platformGenerator.position;
+		platformStartPoint1 = platformGenerator1.position;
+		platformStartPoint2 = platformGenerator2.position;
+		platformStartPoint3 = platformGenerator3.position;
 
-		if (GameObject.FindGameObjectWithTag("Spawn")) {
-			checkpoint = GameObject.FindGameObjectWithTag("Spawn").transform.position;
-		}
-
-		SpawnPlayer(checkpoint);
+		playerStartPoint = thePlayer.transform.position;
 	}
 	
-	// Spawn player
-	private void SpawnPlayer(Vector3 spawnPos) {
-		currentPlayer = Instantiate(player,spawnPos,Quaternion.identity) as GameObject;
-		cam.SetTarget(currentPlayer.transform);
+	// Update is called once per frame
+	void Update () {
+	
 	}
 
-	private void Update() {
-		if (!currentPlayer) {
-			if (Input.GetButtonDown("Respawn")) {
-				SpawnPlayer(checkpoint);
-			}
-		}
+	public void RestartGame()
+	{
+		StartCoroutine ("RestartGameCo");
 	}
 
-	public void SetCheckpoint(Vector3 cp) {
-		checkpoint = cp;
-	}
-
-	public void EndLevel() {
-		if (currentLevel < levelCount) {
-			currentLevel++;
-			Application.LoadLevel("Level " + currentLevel);
-		}
-		else {
-			Debug.Log("Game Over");
-		}
+	public IEnumerator RestartGameCo()
+	{
+		thePlayer.gameObject.SetActive (false);
+		yield return new WaitForSeconds (0.5f);
+		thePlayer.transform.position = playerStartPoint;
+		platformGenerator.position = platformStartPoint;
+		platformGenerator1.position = platformStartPoint1;
+		platformGenerator2.position = platformStartPoint2;
+		platformGenerator3.position = platformStartPoint3;
+		thePlayer.gameObject.SetActive (true);
 	}
 }
